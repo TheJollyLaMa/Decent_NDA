@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="./assets/SecretPyramid.png" type="image/x-icon">
+  <title>Decent NDA</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/right-panel.css">
+</head>
+<body>
+  <!-- Background Video -->
+  <video autoplay muted loop id="background-video">
+    <source src="./assets/SecretPyramid.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+
+  <!-- Header -->
+<!-- Header -->
+<header class="header">
+
+    <div class="centered-title">
+        <div class="title">
+            <img src="./assets/SecretPyramid.png" alt="Secret Pyramid" class="header-icon">
+            <img src="./assets/Eth.gif" alt="Ethereum Icon" class="header-icon">
+            <h1> - ⸬ - Decent ⚸<div class="holy-cross"> ☥ </div>🧞‍♂️ NDA - ⸬ -</h1>
+            <img src="./assets/Eth.gif" alt="Ethereum Icon" class="header-icon">
+            <img src="./assets/SecretPyramid.png" alt="Secret Pyramid" class="header-icon">
+        </div>
+
+        <div class="wallet-display" id="wallet-display">Not Connected</div>
+        
+        <!-- Contract Address (Clickable) -->
+        <div id="contract-address" class="contract-info" style="display: none;">
+            <a id="contract-address-text" href="#" target="_blank"></a>
+        </div>
+
+        <!-- NDA Hash (Pinned to Bottom) -->
+        <div class="hash-info">
+            <span id="get-nda-hash-response">Loading NDA Hash ...</span>
+        </div>
+    </div>
+
+    <button id="connect-wallet" class="wallet-button wallet-disconnected">
+        <img src="./assets/metamask.png" alt="MetaMask" />
+    </button>
+</header>
+
+  <!-- Page Container: Left = Form | Right = NDA Display -->
+  <div class="page-container">
+    <!-- Left: NDA Form -->
+    <div class="left-panel">
+      <form id="nda-form">
+        <h1>Decent NDA</h1>
+
+        <!-- Sign NDA -->
+        <div class="form-section">
+          <h2>Sign Agreement</h2>
+          <input type="text" id="hashed-message" class="input-field" placeholder="Hashed Message">
+          <button type="button" class="action-button" id="sign-nda">Sign NDA</button>
+          <p class="response-message" id="sign-nda-response"></p>
+        </div>
+
+        <br><hr><br>
+
+        <!-- Verify Signature -->
+        <div class="form-section">
+          <h2>Verify Signature</h2>
+          <input type="text" id="verify-hashed-message" class="input-field" placeholder="Hashed Message">
+          <button type="button" class="action-button" id="verify-signature">Verify</button>
+          <p class="response-message" id="verify-signature-response"></p>
+        </div>
+
+        <br><hr><br>
+
+        <!-- Decrypt NDA -->
+        <div class="form-section">
+          <h2>Decrypt NDA</h2>
+          <button type="button" class="action-button" id="decrypt-nda">Decrypt NDA</button>
+          <p class="response-message" id="decrypted-nda"></p>
+        </div>
+      </form>
+    </div>
+
+    <!-- Right: NDA Display (Only for Authorized Users) -->
+    <div class="right-panel hidden" id="nda-panel">
+        <h2>NDA Document</h2>
+        <pre id="nda-display">No NDA loaded.</pre>
+
+        <!-- Upload NDA Section -->
+        <div class="upload-nda-section">
+            <h2>Upload NDA</h2>
+            <input type="file" id="file-input" />
+            <button type="button" id="convert-to-json">Convert to JSON</button>
+            <textarea id="nda-json" class="input-field" placeholder="Converted JSON will appear here"></textarea>
+            <button type="button" id="upload-nda">Upload NDA</button>
+            <p class="response-message" id="upload-nda-response"></p>
+        </div>
+    </div>
+
+  </div>
+
+  <!-- JS Libraries -->
+    <!-- Web3 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.7.0/web3.min.js"></script>
+    <!-- W3UP Client (No Import Needed) -->
+    <script src="https://cdn.jsdelivr.net/npm/@web3-storage/w3up-client@latest/dist/w3up.min.js"></script>
+
+    <!-- Custom Scripts -->
+    <script src="js/encryption.js"></script>
+    <script src="js/w3up.js"></script>
+    <script src="js/app.js"></script>
+
+</body>
+</html>

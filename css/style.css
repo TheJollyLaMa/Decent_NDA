@@ -1,0 +1,339 @@
+/* GENERAL STYLING */
+body {
+    font-family: "Chalkduster", cursive;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.7);
+    background-blend-mode: overlay;
+    overflow: hidden; /* Prevents extra scrolling */
+}
+
+/* BACKGROUND VIDEO */
+#background-video {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.5;
+    z-index: -1;
+}
+
+/* HEADER */
+.header {
+    width: 100%;
+    height: 120px;
+    padding: 5px 0;
+    background: rgba(0, 0, 0, 0.9);
+    box-shadow: 0 2px 10px rgba(0, 255, 255, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    z-index: 1000;
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+
+/* TITLE & ICONS */
+.title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: -10px;
+
+}
+.holy-cross {
+    margin: 0px;
+    font-size: 72px;
+    display: inline-block;
+    vertical-align: middle;
+    color: rgba(0, 68, 255, 0.48);
+    text-shadow: 0 0 5px #fff694;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.header-icon {
+    width: 50px;
+    height: auto;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+/* PAGE LAYOUT */
+.page-container {
+    display: flex;
+    width: 100%;
+    height: calc(100vh - 80px); /* Adjust height to account for header */
+    margin-top: 100px; /* Push content below header */
+}
+
+/* LEFT PANEL (Form Section) */
+.left-panel {
+    width: 45%;
+    padding: 20px;
+    background: rgba(30, 30, 30, 0.9);
+    border-right: 2px solid cyan;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-y: auto; /* Allows scrolling if content overflows */
+}
+
+/* RIGHT PANEL (NDA Display Section) */
+.right-panel {
+    width: 55%;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    overflow-y: auto; /* Allows scrolling */
+}
+
+/* NDA Display Text */
+#nda-display {
+    background: rgba(10, 10, 10, 0.85);
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+    font-size: 1rem;
+    white-space: pre-wrap; /* Allows word wrapping for JSON */
+    word-wrap: break-word;
+    width: 90%;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+/* WALLET DISPLAY */
+.wallet-display {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    font-size: 1rem;
+    white-space: nowrap;
+    position: relative;
+    margin-top: -30px;
+
+}
+
+.wallet-display .icon {
+    width: 18px;
+    height: 18px;
+    filter: drop-shadow(0 0 5px cyan);
+}
+
+#wallet-address-start,
+#wallet-address-end {
+    font-weight: bold;
+    background: linear-gradient(90deg, #ffd700, #ff8c00);
+    -webkit-background-clip: text;
+    color: transparent;
+}
+
+/* METAMASK BUTTON */
+/* METAMASK BUTTON */
+.wallet-button {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: rgba(255, 0, 140, 0); /* Slight transparency */
+    width: 75px;
+    height: 75px;
+    border: 2px solid rgb(131, 255, 224);
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 0 8px rgb(0, 251, 255), 0 0 12px rgb(36, 2, 255);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease-in-out;
+}
+
+/* WALLET BUTTON ICON */
+.wallet-button img {
+    width: 50px;
+    height: 50px;
+}
+
+/* HOVER EFFECT */
+.wallet-button:hover {
+    background: rgba(36, 2, 255, 0.8);
+    box-shadow: 0 0 12px rgba(106, 0, 255, 0.8);
+    transform: scale(1.1);
+}
+.wallet-connected {
+    background: rgb(0, 255, 170);
+    border: 2px solid rgb(131, 255, 224);
+    box-shadow: 0 0 8px rgb(0, 251, 255), 0 0 12px rgb(36, 2, 255);
+}
+.wallet-disconnected {
+    background: rgba(255, 0, 140, 0.187);
+    border: 2px solid rgb(253, 215, 0);
+    box-shadow: 0 0 8px rgb(255, 132, 0), 0 0 12px rgb(36, 2, 255);
+}
+
+/* CONNECTED STATE HOVER EFFECT */
+.wallet-button.connected:hover {
+    background: rgba(220, 0, 255, 1);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 1);
+}
+
+/* FORM SECTIONS */
+.form-section {
+    background: rgba(0, 0, 0, 0.8);
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 0 10px cyan;
+    text-align: center;
+    margin-bottom: 20px;
+    width: 100%;
+}
+h1 {
+    color: #00ffff;
+    text-shadow: 0 0 5px #5900ff, 0 0 10px #fff694;
+}
+
+.form-section h2 {
+    margin-bottom: 10px;
+    color: rgb(0, 255, 145);
+    text-shadow: 0 0 3px rgba(239, 255, 158, 0.654);
+}
+
+/* FORM INPUTS */
+.input-field {
+    width: 90%;
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+    text-align: center;
+    background: #222;
+    color: white;
+    font-size: 1rem;
+    box-shadow: 0 0 5px cyan;
+}
+
+.input-field:focus {
+    outline: none;
+    box-shadow: 0 0 10px #00ffff;
+}
+
+/* BUTTONS */
+.action-button {
+    margin: 15px;
+    background: #00ffff;
+    color: black;
+    font-size: 14px;
+    padding: 12px 20px;
+    border-radius: 15px;
+    border: none;
+    cursor: pointer;
+    text-shadow: 0 0 5px #ff00ff;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+}
+
+.action-button:hover {
+    background: #ff00ff;
+    box-shadow: 0 0 20px rgba(255, 0, 255, 0.8);
+}
+
+.action-button:active {
+    background: #ffd700;
+    box-shadow: 0 0 15px rgba(255, 255, 0, 0.8);
+}
+
+/* RESPONSE MESSAGES */
+.response-message {
+    color: #FFD700;
+    font-size: 16px;
+    font-weight: bold;
+    text-shadow: 0 0 8px cyan;
+    margin-top: 10px;
+}
+
+/* MAKE SCROLLBARS LOOK CLEAN */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: cyan;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: black;
+}
+
+
+/* CONTRACT DISPLAY */
+.contract-info {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #FFD700;
+    text-shadow: 0 0 8px cyan;
+    background: rgba(10, 10, 10, 0.9);
+    padding: 5px 10px;
+    border-radius: 10px;
+    width: fit-content;
+    margin: 5px auto;
+}
+
+
+/* MAKE CONTRACT ADDRESS CLICKABLE */
+.contract-info a {
+    color: #FFD700;
+    text-decoration: none;
+    transition: color 0.3s ease-in-out;
+}
+.contract-info a:hover {
+    color: cyan;
+}
+
+/* NDA HASH - PINNED TO BOTTOM */
+.hash-info {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    bottom: 2px;
+    margin-top: 5px;
+    background: rgb(10, 10, 10);
+    color: #cb85f4;
+    text-shadow: 0 0 8px rgb(200, 255, 255);
+    font-size: 1rem;
+    font-weight: bold;
+    padding: 5px 10px;
+    width: fit-content;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgb(200, 255, 255);
+}
+
+/* ICONS FOR CONTRACT & NDA HASH */
+.contract-info .icon, .hash-info .icon {
+    width: 22px;
+    height: 22px;
+    margin: 0px;
+    filter: drop-shadow(0 0 5px cyan);
+}
+
+/* CONTRACT ADDRESS ICONS */
+.contract-info .icon {
+    width: 18px;
+    height: 18px;
+    filter: drop-shadow(0 0 5px cyan);
+}

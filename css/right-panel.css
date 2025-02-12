@@ -1,0 +1,112 @@
+/* RIGHT PANEL (NDA Display Section) */
+.right-panel {
+    width: 55%;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.85);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    overflow-y: auto; /* Allows scrolling */
+    border-left: 2px solid cyan; /* Matches left panel */
+}
+
+/* NDA DISPLAY AREA */
+#nda-display {
+    background: rgba(10, 10, 10, 0.85);
+    margin: 15px;
+    padding: 15px;
+    border-radius: 15px;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+    font-size: 1rem;
+    color: #FFD700;
+    white-space: pre-wrap; /* Ensures word wrapping for JSON */
+    word-wrap: break-word;
+    width: 90%;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+/* HIDE NDA DOCUMENT IF NOT AUTHORIZED */
+.hidden {
+    display: none;
+}
+
+/* UPLOAD NDA SECTION */
+.upload-nda-section {
+    background: rgba(0, 0, 0, 0.8);
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 0 10px cyan;
+    text-align: center;
+    margin-bottom: 20px;
+    width: 90%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* FILE INPUT & UPLOAD */
+#file-input {
+    margin-top: 10px;
+    background: black;
+    color: rgb(1, 253, 148);
+    border: 1px solid cyan;
+    padding: 8px;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+/* BUTTON STYLES */
+#convert-to-json, #upload-nda {
+    margin-top: 10px;
+    background: cyan;
+    color: black;
+    font-size: 14px;
+    padding: 12px 20px;
+    border-radius: 15px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+}
+
+#convert-to-json:hover, #upload-nda:hover {
+    background: #ff00ff;
+    box-shadow: 0 0 20px rgba(255, 0, 255, 0.8);
+}
+
+#convert-to-json:active, #upload-nda:active {
+    background: #ffd700;
+    box-shadow: 0 0 15px rgba(255, 255, 0, 0.8);
+}
+
+/* JSON TEXT AREA */
+#nda-json {
+    width: 90%;
+    height: 150px;
+    margin-top: 10px;
+    background: #222;
+    color: white;
+    padding: 10px;
+    border-radius: 10px;
+    font-size: 1rem;
+    box-shadow: 0 0 5px cyan;
+    text-align: left;
+    overflow-y: auto;
+}
+
+#nda-json:focus {
+    outline: none;
+    box-shadow: 0 0 10px #00ffff;
+}
+
+/* RESPONSE MESSAGE */
+.response-message {
+    color: #FFD700;
+    font-size: 16px;
+    font-weight: bold;
+    text-shadow: 0 0 8px cyan;
+    margin-top: 10px;
+}
