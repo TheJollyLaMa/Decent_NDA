@@ -1,25 +1,8 @@
 async function loadABI() {
-    let abiPath;
-
-    // Check if running on GitHub Pages
-    if (window.location.hostname.includes("github.io")) {
-        abiPath = "DecentNDA/abis/Decent_NDA_000001.json";
-    } else {
-        // Running locally
-        abiPath = "/abis/Decent_NDA_000001.json";
-    }
-
-    console.log(`📂 Loading ABI from: ${abiPath}`);
-
-    try {
-        const response = await fetch(abiPath);
-        if (!response.ok) throw new Error(`Failed to load ABI from ${abiPath}`);
-        return response.json();
-    } catch (error) {
-        console.error("❌ Error loading ABI:", error);
-        return null;
-    }
+    const response = await fetch("abis/Decent_NDA_000001.json");
+    return response.json();
 }
+
 let web3;
 let contract;
 let contractABI;
