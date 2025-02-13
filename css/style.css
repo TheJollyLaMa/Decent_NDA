@@ -70,8 +70,8 @@ body {
 .page-container {
     display: flex;
     width: 100%;
-    height: calc(100vh - 80px); /* Adjust height to account for header */
-    margin-top: 100px; /* Push content below header */
+    height: calc(100vh - 135px); /* Adjust height to account for header */
+    margin-top: 135px; /* Push content below header */
 }
 
 /* LEFT PANEL (Form Section) */
@@ -277,30 +277,29 @@ h1 {
 
 
 /* CONTRACT DISPLAY */
-.contract-info {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
-    font-size: 1rem;
+/* CONTRACT ADDRESS - UPPER LEFT */
+.contract-info.upper-left {
+    position: absolute;
+    top: 10px;
+    left: 20px;
+    font-size: 14px;
     font-weight: bold;
     color: #FFD700;
     text-shadow: 0 0 8px cyan;
     background: rgba(10, 10, 10, 0.9);
-    padding: 5px 10px;
     border-radius: 10px;
-    width: fit-content;
-    margin: 5px auto;
+    padding: 5px 10px;
+    box-shadow: 0 0 10px rgba(200, 255, 255, 0.5);
 }
 
-
-/* MAKE CONTRACT ADDRESS CLICKABLE */
-.contract-info a {
+/* Make Contract Address Clickable */
+.contract-info.upper-left a {
     color: #FFD700;
     text-decoration: none;
     transition: color 0.3s ease-in-out;
 }
-.contract-info a:hover {
+
+.contract-info.upper-left a:hover {
     color: cyan;
 }
 
@@ -336,4 +335,59 @@ h1 {
     width: 18px;
     height: 18px;
     filter: drop-shadow(0 0 5px cyan);
+}
+
+
+/* MODAL STYLES */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(8px);
+    justify-content: center;
+    align-items: center;
+}
+
+/* MODAL CONTENT */
+.modal-content {
+    background: rgba(10, 10, 10, 0.95);
+    color: #FFD700;
+    padding: 20px;
+    border-radius: 15px;
+    width: 60%;
+    max-width: 800px;
+    box-shadow: 0 0 15px cyan;
+    text-align: center;
+    overflow-y: auto;
+    max-height: 80vh;
+}
+
+/* FIX WORD WRAPPING INSIDE MODAL */
+#nda-modal-content {
+    background: rgba(0, 0, 0, 0.8);
+    padding: 15px;
+    border-radius: 10px;
+    font-size: 1rem;
+    white-space: pre-wrap; /* Enables word wrapping */
+    word-wrap: break-word; /* Break long words */
+    max-height: 60vh;
+    overflow-y: auto;
+    text-align: left;
+}
+
+.close-modal {
+    float: right;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    color: cyan;
+}
+
+.close-modal:hover {
+    color: #ff00ff;
 }

@@ -18,6 +18,10 @@
   <!-- Header -->
 <!-- Header -->
 <header class="header">
+    <!-- Contract Address (Upper Left Corner) -->
+    <div id="contract-address" class="contract-info upper-left" style="display: none;">
+        <a id="contract-address-text" href="#" target="_blank"></a>
+    </div>
 
     <div class="centered-title">
         <div class="title">
@@ -30,13 +34,8 @@
 
         <div class="wallet-display" id="wallet-display">Not Connected</div>
         
-        <!-- Contract Address (Clickable) -->
-        <div id="contract-address" class="contract-info" style="display: none;">
-            <a id="contract-address-text" href="#" target="_blank"></a>
-        </div>
-
         <!-- NDA Hash (Pinned to Bottom) -->
-        <div class="hash-info">
+        <div id="hash-info" class="hash-info hidden">
             <span id="get-nda-hash-response">Loading NDA Hash ...</span>
         </div>
     </div>
@@ -73,28 +72,52 @@
 
         <br><hr><br>
 
-        <!-- Decrypt NDA -->
+        <!-- Update NDA Hash (Owner Only) -->
         <div class="form-section">
-          <h2>Decrypt NDA</h2>
-          <button type="button" class="action-button" id="decrypt-nda">Decrypt NDA</button>
-          <p class="response-message" id="decrypted-nda"></p>
+            <h2>Update NDA Hash</h2>
+            <input type="text" id="new-nda-hash" class="input-field" placeholder="Enter New NDA Hash">
+            <button type="button" class="action-button" id="update-nda">Update NDA</button>
+            <p class="response-message" id="update-nda-hash-response"></p>
         </div>
       </form>
     </div>
 
     <!-- Right: NDA Display (Only for Authorized Users) -->
     <div class="right-panel hidden" id="nda-panel">
-        <h2>NDA Document</h2>
-        <pre id="nda-display">No NDA loaded.</pre>
+
+    <!-- Input fields for IV & Key -->
+    <input type="text" id="decrypt-iv" class="input-field" placeholder="Enter IV">
+    <input type="text" id="decrypt-key" class="input-field" placeholder="Enter Key">
+    <input type="text" id="decrypt-hash" class="input-field" placeholder="Enter Hash">
+    <!-- Decrypt NDA Button -->
+    <button type="button" class="action-button" id="decrypt-nda">Decrypt NDA</button>
+
+    <!-- NDA Modal -->
+    <div id="nda-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Decrypted NDA</h2>
+            <pre id="nda-modal-content">No NDA Loaded</pre>
+        </div>
+    </div>
 
         <!-- Upload NDA Section -->
         <div class="upload-nda-section">
             <h2>Upload NDA</h2>
             <input type="file" id="file-input" />
             <button type="button" id="convert-to-json">Convert to JSON</button>
+            
+            <!-- JSON Display Area -->
             <textarea id="nda-json" class="input-field" placeholder="Converted JSON will appear here"></textarea>
-            <button type="button" id="upload-nda">Upload NDA</button>
-            <p class="response-message" id="upload-nda-response"></p>
+
+            <!-- Encrypt JSON Button -->
+            <button type="button" id="encrypt-nda">Encrypt NDA</button>
+
+            <!-- Encrypted JSON Display Area -->
+            <textarea id="encrypted-nda" class="input-field" placeholder="Encrypted JSON will appear here" readonly></textarea>
+
+            <!-- Manual Upload Instructions -->
+            <p>Copy the encrypted NDA and upload to IPFS manually.</p>
         </div>
     </div>
 
@@ -104,8 +127,7 @@
     <!-- Web3 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.7.0/web3.min.js"></script>
     <!-- W3UP Client (No Import Needed) -->
-    <script src="https://cdn.jsdelivr.net/npm/@web3-storage/w3up-client@latest/dist/w3up.min.js"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/@web3-storage/w3up-client@17.1.2/browser.min.js"></script>
     <!-- Custom Scripts -->
     <script src="js/encryption.js"></script>
     <script src="js/w3up.js"></script>

@@ -47,21 +47,37 @@
     align-items: center;
 }
 
-/* FILE INPUT & UPLOAD */
+/* FILE INPUT STYLE */
 #file-input {
-    margin-top: 10px;
-    background: black;
-    color: rgb(1, 253, 148);
-    border: 1px solid cyan;
-    padding: 8px;
-    border-radius: 5px;
+    background: #111;
+    color: cyan;
+    border: 2px solid cyan;
+    padding: 10px;
+    border-radius: 10px;
     font-size: 1rem;
+    width: 90%;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
 }
 
-/* BUTTON STYLES */
-#convert-to-json, #upload-nda {
-    margin-top: 10px;
+#file-input:hover {
     background: cyan;
+    color: black;
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.8);
+}
+
+#file-input:active {
+    background: #ffd700;
+    color: black;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
+}
+
+/* BUTTONS (JSON CONVERSION & ENCRYPTION) */
+#convert-to-json, #encrypt-nda {
+    margin-top: 10px;
+    background: #00ffff;
     color: black;
     font-size: 14px;
     padding: 12px 20px;
@@ -69,21 +85,24 @@
     border: none;
     cursor: pointer;
     transition: all 0.3s ease-in-out;
+    text-shadow: 0 0 5px #ff00ff;
     box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
 }
 
-#convert-to-json:hover, #upload-nda:hover {
+#convert-to-json:hover, #encrypt-nda:hover {
     background: #ff00ff;
     box-shadow: 0 0 20px rgba(255, 0, 255, 0.8);
+    color: #fff;
 }
 
-#convert-to-json:active, #upload-nda:active {
+#convert-to-json:active, #encrypt-nda:active {
     background: #ffd700;
     box-shadow: 0 0 15px rgba(255, 255, 0, 0.8);
+    color: black;
 }
 
 /* JSON TEXT AREA */
-#nda-json {
+#nda-json, #encrypted-nda {
     width: 90%;
     height: 150px;
     margin-top: 10px;
@@ -97,7 +116,7 @@
     overflow-y: auto;
 }
 
-#nda-json:focus {
+#nda-json:focus, #encrypted-nda:focus {
     outline: none;
     box-shadow: 0 0 10px #00ffff;
 }

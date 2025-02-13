@@ -1,77 +1,141 @@
 async function initializeW3UP() {
-    console.log("🚀 Initializing W3UP...");
+    console.log("🚀 Attempting to initialize W3UP...");
 
-    if (typeof window.w3up === "undefined") {
-        console.error("❌ W3UP client not found! Retrying in 1 second...");
+    if (!window.w3up) {
+        console.error("❌ W3UP library not found. Retrying in 1 second...");
         setTimeout(initializeW3UP, 1000);
         return;
     }
 
     try {
-        console.log("✅ W3UP client detected, creating instance...");
-        const client = await window.w3up.create();
-        console.log("✅ W3UP Client Created:", client);
+        console.log("✅ W3UP client detected. Checking available methods...");
+        console.log("Available W3UP methods:", Object.keys(window.w3up));
 
-        await client.login();
-        console.log("✅ User logged into W3UP.");
+        if (!window.w3up.Client) {
+            console.error("❌ `Client` class not found in W3UP! Check documentation.");
+            return;
+        }
 
-        await client.provision();
-        console.log("✅ Storage space provisioned.");
+        console.log("🔄 Creating W3UP client...");
+        window.w3upClient = new window.w3up.Client();
+        console.log("✅ W3UP Client Created:", window.w3upClient);
 
-        async function uploadToW3UP(encryptedData) {
-            if (!client) {
-                console.error("❌ Error: W3UP Client is not initialized.");
+        console.log("🔄 Checking if already logged in...");
+        const isLoggedIn = await checkW3UPLogin();
+        if (!isLoggedIn) {
+            console.log("🔄 User NOT logged in. Requesting email for authentication...");
+            
+            const userEmail = prompt("Enter your email to authenticate with W3UP:");
+            if (!userEmail || !userEmail.includes("@")) {
+                console.error("❌ Invalid email format. Cannot log in.");
                 return;
             }
 
-            console.log("🆙 Uploading NDA to W3UP...");
-            const file = new Blob([JSON.stringify(encryptedData)], { type: "application/json" });
+            console.log(`📨 Sending login request to: ${userEmail}...`);
+            
+            try {
+                const account = await window.w3upClient.login(userEmail);
 
-            const cid = await client.uploadFile(file);
-            console.log("✅ Encrypted NDA CID:", cid);
-            alert(`NDA uploaded! CID: ${cid}`);
+                console.log("🔍 DEBUG: Login response:", account);
 
-            // Store CID on-chain
-            const accounts = await web3.eth.getAccounts();
-            await contract.methods.updateNDA(cid).send({ from: accounts[0] });
+                if (!account) {
+                    throw new Error("❌ W3UP login failed: No account object returned.");
+                }
+
+                console.log("✅ Login request sent! Check your inbox for the confirmation link.");
+                console.log("⏳ Waiting for email confirmation...");
+                
+                await waitForEmailConfirmation(account);
+                console.log("✅ Email confirmed! Proceeding with W3UP setup.");
+                
+            } catch (error) {
+                console.error("❌ Error logging in with W3UP:", error);
+            }
+        } else {
+            console.log("✅ Already logged into W3UP.");
         }
 
-        window.uploadToW3UP = uploadToW3UP;
-        console.log("✅ W3UP initialized successfully.");
+        console.log("✅ W3UP fully initialized!");
+
     } catch (error) {
         console.error("❌ Error initializing W3UP:", error);
     }
 }
+/**
+ * ✅ Check if the user is already logged into W3UP before calling `login()`
+ */
+async function checkW3UPLogin() {
+    try {
+        const account = await window.w3upClient;
+        console.log("🔍 DEBUG: Account object:", account);
+        if (account) {
+            console.log("✅ W3UP Account Found:", account);
+            return true;
+        }
+    } catch (error) {
+        console.warn("⚠️ No W3UP account found, login required.");
+    }
+    return false;
+}
+
+/**
+ * ✅ Wait for email confirmation by checking for account access periodically
+ */
+async function waitForEmailConfirmation(account, maxAttempts = 30, delay = 30000) {
+    console.log("⏳ Waiting for email confirmation...");
+
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+        try {
+            const isLoggedIn = await checkW3UPLogin();
+            if (isLoggedIn) {
+                console.log("✅ Email confirmed! Proceeding with W3UP setup.");
+                return;
+            }
+        } catch (error) {
+            console.warn(`⚠️ Attempt ${attempt}: Waiting for confirmation...`);
+        }
+
+        await new Promise(resolve => setTimeout(resolve, delay)); // Wait before retrying
+    }
+
+    throw new Error("❌ Email confirmation timeout. Please try logging in again.");
+}
 
 async function uploadToW3UP(ndaJson) {
-    // 1️⃣ Generate Encryption Key
-    const encryptionKey = await generateEncryptionKey();
-    const encryptedData = await encryptNDA(ndaJson, encryptionKey);
+    console.log("🔄 Uploading NDA JSON to W3UP...");
 
-    // 2️⃣ Convert Encrypted Data to JSON
-    const encryptedNDA = JSON.stringify(encryptedData);
-    const file = new Blob([encryptedNDA], { type: "application/json" });
+    // Convert JSON to Blob
+    const file = new Blob([ndaJson], { type: "application/json" });
 
-    // 3️⃣ Upload to W3UP
-    const client = await window.w3up.create();
-    await client.login();
-    await client.provision();
+    // Ensure W3UP Client is Initialized
+    if (!window.w3upClient) {
+        console.error("❌ W3UP Client is not initialized. Aborting upload.");
+        return;
+    }
 
-    const cid = await client.uploadFile(file);
-    console.log("Encrypted NDA CID:", cid);
-    alert(`NDA uploaded! CID: ${cid}`);
+    try {
+        console.log("🔄 Checking W3UP client instance...");
+        console.log("W3UP Client:", window.w3upClient);
 
-    // 4️⃣ Export Encryption Key for Signers
-    const keyString = await exportEncryptionKey(encryptionKey);
-    console.log("Encryption Key (Share with Signers):", keyString);
+        console.log("🔄 Getting current space...");
+        const space = await window.w3upClient.currentSpace();
+        if (!space) {
+            console.error("❌ No active W3UP space. Ensure the user has a provisioned space.");
+            return;
+        }
 
-    // 5️⃣ Store CID on Smart Contract
-    const accounts = await web3.eth.getAccounts();
-    await contract.methods.updateNDA(cid).send({ from: accounts[0] });
+        console.log("✅ Space found! Uploading file...");
 
-    return { cid, keyString };
+        // Correct upload method
+        const cid = await space.store.add(file);
+        console.log("✅ NDA CID:", cid);
+
+        return { cid };
+    } catch (error) {
+        console.error("❌ Error uploading NDA to W3UP:", error);
+    }
 }
 
 window.uploadToW3UP = uploadToW3UP;
 
-window.onload = initializeW3UP;
+window.initializeW3UP = initializeW3UP;

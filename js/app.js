@@ -19,39 +19,33 @@ async function checkAuthorization(wallet) {
         const owner = await contract.methods.owner().call();
         const isSigner = await contract.methods.signatories(wallet).call();
 
+        const ndaHashContainer = document.getElementById("get-nda-hash-response");
+        const ndaPanel = document.getElementById("nda-panel");
+
         if (wallet.toLowerCase() === owner.toLowerCase() || isSigner) {
-            console.log("User is authorized");
+            console.log("✅ User is authorized");
+            // Show NDA and Contract Address
+            document.getElementById("contract-address").style.display = "block";
+            ndaPanel.classList.remove("hidden");
 
-            // Show Contract Address & NDA Hash
-            const contractAddressElem = document.getElementById("contract-address");
-            if (contractAddressElem) {
-                contractAddressElem.style.display = "flex";
-            } else {
-                console.warn("⚠️ Warning: contract-address element not found.");
-            }
-
-            updateContractDisplay(contractAddress);
-
-            // Show NDA Panel
-            const ndaPanel = document.getElementById("nda-panel");
-            if (ndaPanel) {
-                ndaPanel.classList.remove("hidden");
-            } else {
-                console.warn("⚠️ Warning: nda-panel element not found.");
-            }
-
-            // Fetch NDA Data
+            // Fetch NDA Hash
             getNDAHash();
-
-            const ndaHashContainer = document.getElementById("nda-hash-container");
-            if (ndaHashContainer) {
-                ndaHashContainer.style.display = "block";
-            }
         } else {
-            console.warn("User is NOT authorized.");
+            console.warn("🚫 User is NOT authorized. Hiding NDA.");
+            
+            // Hide NDA Hash & NDA Panel
+            ndaHashContainer.textContent = "NDA Hash: ❌ Not Authorized";
+            ndaPanel.classList.add("hidden");
+
+            document.getElementById("contract-address").style.display = "none";
+
+            
         }
+
+        return wallet.toLowerCase() === owner.toLowerCase() || isSigner;
     } catch (error) {
-        console.error("Error checking authorization:", error);
+        console.error("❌ Error checking authorization:", error);
+        return false;
     }
 }
 
@@ -97,13 +91,31 @@ async function initWeb3() {
 
         // Show Contract Address & Check Authorization
         document.getElementById("contract-address-text").textContent = contractAddress;
-        await checkAuthorization(accounts[0]);
 
+        await checkAuthorization(accounts[0]);
+        updateContractDisplay(contractAddress);
         document.getElementById("connect-wallet").classList.add("wallet-connected");
         document.getElementById("connect-wallet").classList.remove("wallet-disconnected");
 
-        // Now we can safely fetch the NDA hash
-        getNDAHash();
+
+
+        // ✅ Handle Wallet Changes
+        window.ethereum.on("accountsChanged", async (newAccounts) => {
+            console.log("🔄 Wallet switched to:", newAccounts[0]);
+
+            // Update UI
+            updateWalletDisplay(newAccounts[0], chainId);
+
+            // Re-check authorization
+            const isAuthorized = await checkAuthorization(newAccounts[0]);
+            if (!isAuthorized) {
+                console.log("🚫 Hiding NDA because new wallet is not authorized.");
+                document.getElementById("nda-panel").classList.add("hidden");
+                document.getElementById("get-nda-hash-response").textContent = "NDA Hash: ❌ Not Authorized";
+            } else {
+                getNDAHash();
+            }
+        });
     } else {
         alert("Please install MetaMask.");
     }
@@ -131,6 +143,7 @@ async function getNDAHash() {
     try {
         const hash = await contract.methods.ndaHash().call();
         document.getElementById("get-nda-hash-response").textContent = `NDA Hash: ${hash}`;
+        document.getElementById("hash-info").classList.remove("hidden");
     } catch (error) {
         console.error("Error retrieving NDA Hash:", error);
     }
@@ -168,52 +181,151 @@ async function uploadNDA() {
         return;
     }
 
-    const { cid, keyString } = await uploadToW3UP(ndaJson);
+    // Upload JSON to W3UP
+    const { cid } = await uploadToW3UP(ndaJson);
 
-    const responseElem = document.getElementById("upload-nda-response");
-    if (responseElem) {
-        responseElem.textContent = `NDA Uploaded! CID: ${cid}. Share this Key with Signers: ${keyString}`;
-    } else {
-        console.warn("⚠️ Warning: upload-nda-response element not found.");
+    // Update UI with CID
+    document.getElementById("upload-nda-response").textContent = `✅ NDA Uploaded! CID: ${cid}`;
+}
+
+// ✅ Update NDA Hash (Owner Only)
+async function updateNDAHash() {
+    try {
+        if (!contract) {
+            console.error("❌ Contract instance not found.");
+            return;
+        }
+
+        const accounts = await web3.eth.getAccounts();
+        if (!accounts.length) {
+            alert("❌ No accounts detected. Please connect your wallet.");
+            return;
+        }
+
+        const owner = await contract.methods.owner().call();
+        console.log("👤 Contract Owner:", owner);
+        console.log("🔑 Sender Address:", accounts[0]);
+
+        if (accounts[0].toLowerCase() !== owner.toLowerCase()) {
+            alert("❌ Only the contract owner can update the NDA hash.");
+            return;
+        }
+
+        const newHash = document.getElementById("new-nda-hash").value.trim();
+        if (!newHash) {
+            alert("❌ Please enter a valid NDA hash.");
+            return;
+        }
+
+        console.log("🔄 Fetching current gas price...");
+        const gasPrice = await web3.eth.getGasPrice();
+        console.log(`⛽ Current Gas Price: ${web3.utils.fromWei(gasPrice, 'gwei')} Gwei`);
+
+        console.log("🔄 Sending transaction to update NDA Hash...");
+        const receipt = await contract.methods.updateNDA(newHash).send({
+            from: accounts[0],
+            gas: 500000, // Adjust if necessary
+            gasPrice: gasPrice * 2
+        });
+
+        console.log("✅ NDA Hash Successfully Updated! Transaction Receipt:", receipt);
+        document.getElementById("update-nda-hash-response").textContent = `✅ NDA Hash Updated: ${newHash}`;
+
+        // Refresh NDA Hash Display
+        getNDAHash();
+    } catch (error) {
+        console.error("❌ Error updating NDA Hash:", error);
+        document.getElementById("update-nda-hash-response").textContent = "❌ Error updating NDA Hash.";
     }
 }
 
 // Event Listeners
-window.onload = function () {
-    document.getElementById("connect-wallet").addEventListener("click", initWeb3);
-    document.getElementById("sign-nda").addEventListener("click", signNDA);
-    document.getElementById("upload-nda").addEventListener("click", uploadNDA);
+document.addEventListener("DOMContentLoaded", function () {
+    console.log("✅ DOM fully loaded. Initializing app...");
 
-    // Convert NDA File to JSON
-    document.getElementById("convert-to-json").addEventListener("click", function () {
-        const fileInput = document.getElementById("file-input");
-        if (!fileInput.files.length) {
-            alert("Please select a file first.");
-            return;
-        }
+    // Check if elements exist before attaching event listeners
+    const connectWalletButton = document.getElementById("connect-wallet");
+    const signNDAButton = document.getElementById("sign-nda");
+    const convertToJsonButton = document.getElementById("convert-to-json");
+    const encryptNDAButton = document.getElementById("encrypt-nda");
+    const updateNDAButton = document.getElementById("update-nda");
 
-        const reader = new FileReader();
-        reader.onload = function (event) {
-            const fileContent = event.target.result;
-            const jsonContent = JSON.stringify({ nda: fileContent }, null, 2);
-            document.getElementById("nda-json").value = jsonContent;
-        };
-        reader.readAsText(fileInput.files[0]);
-    });
+    if (connectWalletButton) {
+        connectWalletButton.addEventListener("click", initWeb3);
+    } else {
+        console.warn("⚠️ connect-wallet button not found.");
+    }
 
-    
+    if (signNDAButton) {
+        signNDAButton.addEventListener("click", signNDA);
+    } else {
+        console.warn("⚠️ sign-nda button not found.");
+    }
 
-    document.getElementById("upload-nda").addEventListener("click", async function () {
-        const ndaJson = document.getElementById("nda-json").value;
-        if (!ndaJson) {
-            alert("No NDA data available.");
-            return;
-        }
-    
-        const { cid, keyString } = await uploadToW3UP(ndaJson);
-        
-        // Show the Encryption Key
-        document.getElementById("upload-nda-response").textContent = `NDA Uploaded! CID: ${cid}. 
-            Share this Key with Signers: ${keyString}`;
-    });
-};
+    if (updateNDAButton) {
+        updateNDAButton.addEventListener("click", updateNDAHash);
+    } else {
+        console.warn("⚠️ upload-nda button not found.");
+    }
+
+    if (convertToJsonButton) {
+        convertToJsonButton.addEventListener("click", function () {
+            const fileInput = document.getElementById("file-input");
+            const jsonOutput = document.getElementById("nda-json");
+
+            if (!fileInput || !jsonOutput) {
+                console.error("❌ File input or JSON output element missing.");
+                return;
+            }
+
+            if (!fileInput.files.length) {
+                alert("❌ Please select a file first.");
+                return;
+            }
+
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function (event) {
+                const ndaText = event.target.result;
+                const ndaJson = {
+                    "ndaText": ndaText,
+                    "dateCreated": new Date().toISOString()
+                };
+
+                jsonOutput.value = JSON.stringify(ndaJson, null, 2);
+                console.log("✅ NDA Converted to JSON:", ndaJson);
+            };
+
+            reader.onerror = function () {
+                console.error("❌ Error reading file.");
+                alert("Error reading file.");
+            };
+
+            reader.readAsText(file);
+        });
+    } else {
+        console.warn("⚠️ convert-to-json button not found.");
+    }
+
+    if (encryptNDAButton) {
+        encryptNDAButton.addEventListener("click", async function () {
+            const ndaJsonElem = document.getElementById("nda-json");
+            if (!ndaJsonElem || !ndaJsonElem.value) {
+                alert("No NDA data available.");
+                return;
+            }
+
+            const encryptedResult = await encryptNDA(ndaJsonElem.value);
+            if (!encryptedResult) {
+                alert("Encryption failed.");
+                return;
+            }
+
+            document.getElementById("encrypted-nda").value = JSON.stringify(encryptedResult, null, 2);
+            console.log("✅ NDA Encrypted Successfully:", encryptedResult);
+        });
+    } else {
+        console.warn("⚠️ encrypt-nda button not found.");
+    }
+});
