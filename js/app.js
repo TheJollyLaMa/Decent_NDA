@@ -13,6 +13,17 @@ const chainIcons = {
     10: "Optimism.png",
     56: "BinanceSmartChain.png"
 };
+function legacyUnavailable() {
+    contract = null;
+    web3 = null;
+    const detail = 'Legacy contract unavailable: deployment chain is unverified. Wallet identity does not authorize an NDA.';
+    document.getElementById('legacy-status').textContent = detail;
+    document.getElementById('get-nda-hash-response').textContent = detail;
+    document.getElementById('nda-panel').classList.add('hidden');
+    document.getElementById('contract-address').style.display = 'none';
+    for (const id of ['sign-nda', 'update-nda']) document.getElementById(id).disabled = true;
+    return detail;
+}
 // Check Authorization
 async function checkAuthorization(wallet) {
     try {
@@ -69,6 +80,8 @@ function updateContractDisplay(contractAddress) {
 }
 // Initialize Web3 and Smart Contract
 async function initWeb3() {
+    legacyUnavailable();
+    return;
     if (window.ethereum) {
         web3 = new Web3(window.ethereum);
         await window.ethereum.request({ method: "eth_requestAccounts" });
@@ -82,6 +95,14 @@ async function initWeb3() {
             console.error("❌ Error: Failed to load ABI.");
             return;
         }
+
+        window.addEventListener('decenthead:wallet', () => {
+            contract = null;
+            document.getElementById('nda-panel').classList.add('hidden');
+            document.getElementById('contract-address').style.display = 'none';
+            document.getElementById('get-nda-hash-response').textContent =
+                'Legacy contract unavailable: wallet identity is not NDA authorization; deployment chain is unverified.';
+        });
 
         contract = new web3.eth.Contract(contractABI, contractAddress);
         if (!contract) {
@@ -140,6 +161,8 @@ function updateWalletDisplay(wallet, chainId) {
 
 // Get NDA Hash
 async function getNDAHash() {
+    legacyUnavailable();
+    return;
     try {
         const hash = await contract.methods.ndaHash().call();
         document.getElementById("get-nda-hash-response").textContent = `NDA Hash: ${hash}`;
@@ -153,6 +176,8 @@ async function getNDAHash() {
 
 // Sign NDA
 async function signNDA() {
+    document.getElementById('sign-nda-response').textContent = legacyUnavailable();
+    return;
     try {
         const accounts = await web3.eth.getAccounts();
         const messageHash = web3.utils.sha3("Sign this NDA agreement");
@@ -167,29 +192,10 @@ async function signNDA() {
     }
 }
 
-// Upload NDA
-async function uploadNDA() {
-    const ndaJsonElem = document.getElementById("nda-json");
-    if (!ndaJsonElem) {
-        console.error("❌ Error: nda-json element not found.");
-        return;
-    }
-
-    const ndaJson = ndaJsonElem.value;
-    if (!ndaJson) {
-        alert("No NDA data available.");
-        return;
-    }
-
-    // Upload JSON to W3UP
-    const { cid } = await uploadToW3UP(ndaJson);
-
-    // Update UI with CID
-    document.getElementById("upload-nda-response").textContent = `✅ NDA Uploaded! CID: ${cid}`;
-}
-
 // ✅ Update NDA Hash (Owner Only)
 async function updateNDAHash() {
+    document.getElementById('update-nda-hash-response').textContent = legacyUnavailable();
+    return;
     try {
         if (!contract) {
             console.error("❌ Contract instance not found.");
@@ -241,13 +247,13 @@ async function updateNDAHash() {
 
 // Event Listeners
 document.addEventListener("DOMContentLoaded", function () {
+    legacyUnavailable();
+    window.addEventListener('decenthead:wallet', legacyUnavailable);
     console.log("✅ DOM fully loaded. Initializing app...");
 
     // Check if elements exist before attaching event listeners
     const connectWalletButton = document.getElementById("connect-wallet");
     const signNDAButton = document.getElementById("sign-nda");
-    const convertToJsonButton = document.getElementById("convert-to-json");
-    const encryptNDAButton = document.getElementById("encrypt-nda");
     const updateNDAButton = document.getElementById("update-nda");
 
     if (connectWalletButton) {
@@ -265,67 +271,6 @@ document.addEventListener("DOMContentLoaded", function () {
     if (updateNDAButton) {
         updateNDAButton.addEventListener("click", updateNDAHash);
     } else {
-        console.warn("⚠️ upload-nda button not found.");
-    }
-
-    if (convertToJsonButton) {
-        convertToJsonButton.addEventListener("click", function () {
-            const fileInput = document.getElementById("file-input");
-            const jsonOutput = document.getElementById("nda-json");
-
-            if (!fileInput || !jsonOutput) {
-                console.error("❌ File input or JSON output element missing.");
-                return;
-            }
-
-            if (!fileInput.files.length) {
-                alert("❌ Please select a file first.");
-                return;
-            }
-
-            const file = fileInput.files[0];
-            const reader = new FileReader();
-
-            reader.onload = function (event) {
-                const ndaText = event.target.result;
-                const ndaJson = {
-                    "ndaText": ndaText,
-                    "dateCreated": new Date().toISOString()
-                };
-
-                jsonOutput.value = JSON.stringify(ndaJson, null, 2);
-                console.log("✅ NDA Converted to JSON:", ndaJson);
-            };
-
-            reader.onerror = function () {
-                console.error("❌ Error reading file.");
-                alert("Error reading file.");
-            };
-
-            reader.readAsText(file);
-        });
-    } else {
-        console.warn("⚠️ convert-to-json button not found.");
-    }
-
-    if (encryptNDAButton) {
-        encryptNDAButton.addEventListener("click", async function () {
-            const ndaJsonElem = document.getElementById("nda-json");
-            if (!ndaJsonElem || !ndaJsonElem.value) {
-                alert("No NDA data available.");
-                return;
-            }
-
-            const encryptedResult = await encryptNDA(ndaJsonElem.value);
-            if (!encryptedResult) {
-                alert("Encryption failed.");
-                return;
-            }
-
-            document.getElementById("encrypted-nda").value = JSON.stringify(encryptedResult, null, 2);
-            console.log("✅ NDA Encrypted Successfully:", encryptedResult);
-        });
-    } else {
-        console.warn("⚠️ encrypt-nda button not found.");
+        console.warn("⚠️ update-nda button not found.");
     }
 });
