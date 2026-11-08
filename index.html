@@ -9,6 +9,8 @@
   <link rel="stylesheet" href="css/right-panel.css">
 </head>
 <body>
+  <decent-header></decent-header>
+  <script type="module" src="./decent-head.js"></script>
   <!-- Background Video -->
   <video autoplay muted loop id="background-video">
     <source src="./assets/SecretPyramid.mp4" type="video/mp4">
@@ -17,7 +19,7 @@
 
   <!-- Header -->
 <!-- Header -->
-<header class="header">
+<header class="header" hidden style="display:none">
     <!-- Contract Address (Upper Left Corner) -->
     <div id="contract-address" class="contract-info upper-left" style="display: none;">
         <a id="contract-address-text" href="#" target="_blank"></a>
@@ -53,23 +55,20 @@
     <div class="left-panel">
       <form id="nda-form">
         <h1>Decent NDA</h1>
+        <p id="legacy-status" role="status">Legacy contract unavailable: deployment chain is unverified. Wallet identity does not authorize an NDA.</p>
+        <section class="form-section">
+          <h2>Private agreement prototype</h2>
+          <p>Encrypt and decrypt plain-text agreements locally in a separate page. No upload or on-chain storage.</p>
+          <a class="action-button" href="./private-agreement.html">Open private agreement page</a>
+        </section>
 
-        <!-- Sign NDA -->
+        <p class="privacy-warning"><strong>Legacy wallet controls are separate:</strong> the signature action signs a fixed message, not your document. Contract hashes and transactions are public. Do not enter agreement text, secrets, or a hash that could identify a sensitive agreement. Neither encryption nor a wallet signature establishes consent, identity, or legal enforceability.</p>
+
+        <!-- Legacy contract action -->
         <div class="form-section">
-          <h2>Sign Agreement</h2>
-          <input type="text" id="hashed-message" class="input-field" placeholder="Hashed Message">
-          <button type="button" class="action-button" id="sign-nda">Sign NDA</button>
+          <h2>Legacy fixed-message signature</h2>
+          <button type="button" class="action-button" id="sign-nda" disabled>Sign NDA</button>
           <p class="response-message" id="sign-nda-response"></p>
-        </div>
-
-        <br><hr><br>
-
-        <!-- Verify Signature -->
-        <div class="form-section">
-          <h2>Verify Signature</h2>
-          <input type="text" id="verify-hashed-message" class="input-field" placeholder="Hashed Message">
-          <button type="button" class="action-button" id="verify-signature">Verify</button>
-          <p class="response-message" id="verify-signature-response"></p>
         </div>
 
         <br><hr><br>
@@ -77,8 +76,9 @@
         <!-- Update NDA Hash (Owner Only) -->
         <div class="form-section">
             <h2>Update NDA Hash</h2>
+            <p>This submits a public contract transaction. Do not enter agreement text, keys, passphrases, or a guessable/sensitive document hash.</p>
             <input type="text" id="new-nda-hash" class="input-field" placeholder="Enter New NDA Hash">
-            <button type="button" class="action-button" id="update-nda">Update NDA</button>
+            <button type="button" class="action-button" id="update-nda" disabled>Update NDA</button>
             <p class="response-message" id="update-nda-hash-response"></p>
         </div>
       </form>
@@ -86,41 +86,8 @@
 
     <!-- Right: NDA Display (Only for Authorized Users) -->
     <div class="right-panel hidden" id="nda-panel">
-
-    <!-- Input fields for IV & Key -->
-    <input type="text" id="decrypt-iv" class="input-field" placeholder="Enter IV">
-    <input type="text" id="decrypt-key" class="input-field" placeholder="Enter Key">
-    <input type="text" id="decrypt-hash" class="input-field" placeholder="Enter Hash">
-    <!-- Decrypt NDA Button -->
-    <button type="button" class="action-button" id="decrypt-nda">Decrypt NDA</button>
-
-    <!-- NDA Modal -->
-    <div id="nda-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-modal">&times;</span>
-            <h2>Decrypted NDA</h2>
-            <pre id="nda-modal-content">No NDA Loaded</pre>
-        </div>
-    </div>
-
-        <!-- Upload NDA Section -->
-        <div class="upload-nda-section">
-            <h2>Upload NDA</h2>
-            <input type="file" id="file-input" />
-            <button type="button" id="convert-to-json">Convert to JSON</button>
-            
-            <!-- JSON Display Area -->
-            <textarea id="nda-json" class="input-field" placeholder="Converted JSON will appear here"></textarea>
-
-            <!-- Encrypt JSON Button -->
-            <button type="button" id="encrypt-nda">Encrypt NDA</button>
-
-            <!-- Encrypted JSON Display Area -->
-            <textarea id="encrypted-nda" class="input-field" placeholder="Encrypted JSON will appear here" readonly></textarea>
-
-            <!-- Manual Upload Instructions -->
-            <p>Copy the encrypted NDA and upload to IPFS manually.</p>
-        </div>
+        <h2>Public contract value</h2>
+        <p>This displayed value comes from the legacy contract; it is not part of the local encrypted-package workflow.</p>
     </div>
 
   </div>
@@ -128,11 +95,7 @@
   <!-- JS Libraries -->
     <!-- Web3 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.7.0/web3.min.js"></script>
-    <!-- W3UP Client (No Import Needed) -->
-    <script src="https://cdn.jsdelivr.net/npm/@web3-storage/w3up-client@17.1.2/browser.min.js"></script>
-    <!-- Custom Scripts -->
-    <script src="js/encryption.js"></script>
-    <script src="js/w3up.js"></script>
+    <!-- Contract UI only. Private agreement page has no third-party scripts. -->
     <script src="js/app.js"></script>
 
 </body>

@@ -1,0 +1,107 @@
+:root {
+  color-scheme: dark;
+  font-family: system-ui, sans-serif;
+  background: #10131b;
+  color: #f3f5fa;
+}
+
+body {
+  margin: 0;
+  line-height: 1.55;
+}
+
+main {
+  width: min(52rem, calc(100% - 2rem));
+  margin: 2rem auto;
+}
+
+a {
+  color: #70e7e2;
+}
+
+h1,
+h2 {
+  line-height: 1.2;
+}
+
+section {
+  margin: 1.5rem 0;
+  padding: 1.25rem;
+  border: 1px solid #485467;
+  border-radius: 0.75rem;
+  background: #191f2a;
+}
+
+.notice {
+  padding: 1rem;
+  border-left: 0.35rem solid #ffbd52;
+  background: #352b1b;
+}
+
+label {
+  display: block;
+  margin: 1rem 0 0.35rem;
+  font-weight: 650;
+}
+
+input,
+textarea {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 0.7rem;
+  border: 1px solid #718096;
+  border-radius: 0.4rem;
+  background: #0e1219;
+  color: inherit;
+  font: inherit;
+}
+
+textarea {
+  resize: vertical;
+  overflow-wrap: anywhere;
+}
+
+button {
+  margin: 0.75rem 0.5rem 0 0;
+  padding: 0.65rem 0.9rem;
+  border: 0;
+  border-radius: 0.4rem;
+  background: #70e7e2;
+  color: #10131b;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+button.secondary {
+  background: #d5d9e2;
+}
+
+#status {
+  min-height: 1.5em;
+  font-weight: 650;
+}
+
+#status.error {
+  color: #ff9a9a;
+}
+
+.limits {
+  color: #d0d5df;
+}
+
+@media (max-width: 600px) {
+  main {
+    width: calc(100% - 1rem);
+    margin: 0.5rem auto;
+  }
+
+  section {
+    padding: 0.85rem;
+  }
+}

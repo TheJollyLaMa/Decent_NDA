@@ -1,5 +1,8 @@
 {
-  "dependencies": {
-    "@web3-storage/w3up-client": "^17.1.2"
+  "name": "decent-nda",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test"
   }
 }
